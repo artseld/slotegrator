@@ -1,21 +1,23 @@
 Advanced решение на Yii2. Проект использует Docker, PHP 7, MySQL & RabbitMQ.
 После запуска проекта через Docker, необходимо провести миграции:
 
-yii migrate
+    yii migrate
 
 Далее наполняем тестовыми данными (2 пользователя и 1 администратор, 3 приза разных типов):
 
-yii init-db-data
+    yii init-db-data
 
 Команды для начисления призов (числовой параметр N - количество призов выбираемых для обработки призов - опционален, по умолчанию равно 10):
 
-yii send-prizes/money [N]
-yii send-prizes/items [N]
-yii send-prizes/points [N]
+    yii send-prizes/money [N]
+
+    yii send-prizes/items [N]
+
+    yii send-prizes/points [N]
 
 Отправка призов реализована через очереди, поэтому для обработки должен висеть процесс:
 
-yii queue/listen
+    yii queue/listen
 
 ===
 
