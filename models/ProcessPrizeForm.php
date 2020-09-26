@@ -34,10 +34,10 @@ class ProcessPrizeForm extends Model
     public function afterValidate()
     {
         $this->userPrize = UserPrize::findOne($this->userPrizeId);
-        if (!$this->userPrize) {
+        if (!$this->getUserPrize()) {
             $this->addError('userPrizeId', 'User prize has not been found.');
         }
-        if (!$this->userPrize->isProcessable()) {
+        if (!$this->getUserPrize()->isProcessable()) {
             $this->addError('userPrizeId', 'User prize is already in delivering process.');
         }
 
@@ -71,15 +71,15 @@ class ProcessPrizeForm extends Model
      */
     private function deliver()
     {
-        switch ($this->userPrize->type) {
+        switch ($this->getUserPrize()->type) {
             case Prize::TYPE_MONEY:
-                Yii::$app->queue->push(new BankAccountPrizeTransferJob([ 'userPrizeId' => $this->userPrize->id ]));
+                Yii::$app->queue->push(new BankAccountPrizeTransferJob([ 'userPrizeId' => $this->getUserPrize()->id ]));
                 break;
             case Prize::TYPE_POINTS:
-                Yii::$app->queue->push(new LoyaltyPointsPrizeTransferJob([ 'userPrizeId' => $this->userPrize->id ]));
+                Yii::$app->queue->push(new LoyaltyPointsPrizeTransferJob([ 'userPrizeId' => $this->getUserPrize()->id ]));
                 break;
             case Prize::TYPE_ITEM:
-                Yii::$app->queue->push(new EmailItemPrizeTransferJob([ 'userPrizeId' => $this->userPrize->id ]));
+                Yii::$app->queue->push(new EmailItemPrizeTransferJob([ 'userPrizeId' => $this->getUserPrize()->id ]));
                 break;
             default:
                 throw new NotSupportedException('Unsupported prize type', 400);
@@ -93,12 +93,12 @@ class ProcessPrizeForm extends Model
      */
     private function convert($ratio = null)
     {
-        if ($this->userPrize->type != Prize::TYPE_MONEY) {
+        if ($this->getUserPrize()->type != Prize::TYPE_MONEY) {
             return false;
         }
-        $this->userPrize->value = round($this->userPrize->value * ($ratio ?: Yii::$app->params['moneyToPointsRatio']));
-        $this->userPrize->type = Prize::TYPE_POINTS;
-        return (bool) $this->userPrize->save();
+        $this->getUserPrize()->value = round($this->getUserPrize()->value * ($ratio ?: Yii::$app->params['moneyToPointsRatio']));
+        $this->getUserPrize()->type = Prize::TYPE_POINTS;
+        return (bool) $this->getUserPrize()->save();
     }
 
     /**
@@ -106,6 +106,14 @@ class ProcessPrizeForm extends Model
      */
     private function drop()
     {
-        return (bool) $this->userPrize->delete();
+        return (bool) $this->getUserPrize()->delete();
+    }
+
+    /**
+     * @return UserPrize
+     */
+    public function getUserPrize()
+    {
+        return $this->userPrize;
     }
 }

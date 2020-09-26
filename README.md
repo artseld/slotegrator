@@ -19,6 +19,51 @@ Advanced решение на Yii2. Проект использует Docker, PHP
 
     yii queue/listen
 
+Запуск юнит-теста для конвертации денежного приза в очки лояльности:
+
+    codecept run tests/unit/models/ProcessPrizeFormTest.php
+
+Список добавленных / измененных файлов:
+
+    commands/InitDbDataController.php
+    commands/SendPrizesController.php
+
+    config/db.php
+    config/params.php
+    config/queue.php
+    config/test_db.php
+    config/web.php
+
+    controllers/AbstractController.php
+    controllers/PrizeController.php
+    controllers/SiteController.php
+
+    jobs/AbstractPrizeTransferJob.php
+    jobs/BankAccountPrizeTransferJob.php
+    jobs/EmailItemPrizeTransferJob.php
+    jobs/LoyaltyPointsPrizeTransferJob.php
+
+    migrations/m200923_095541_create_users.php
+    migrations/m200923_105541_create_prizes.php
+
+    models/GetPrizeForm.php
+    models/Prize.php
+    models/ProcessPrizeForm.php
+    models/User.php
+    models/UserPrize.php
+
+    tests/unit/models/ProcessPrizeFormTest.php
+
+    views/layouts/main.php
+    views/prize/get.php
+    views/prize/index.php
+    views/site/about.php
+
+    composer.json
+
+    docker-compose.yml
+    Dockerfile
+
 ===
 
 <p align="center">
